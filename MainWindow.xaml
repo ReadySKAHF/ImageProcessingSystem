@@ -103,71 +103,79 @@
                     </TextBox.Style>
                 </TextBox>
 
-                <Label Grid.Row="1" Grid.Column="2" Content="Master порт:">
-                    <Label.Style>
-                        <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsClientNode}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsSlaveNode}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Label.Style>
-                </Label>
-                <TextBox Grid.Row="1" Grid.Column="3" 
-                        Text="{Binding MasterPort}"
-                        IsEnabled="{Binding CanStart}">
-                    <TextBox.Style>
-                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsClientNode}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsSlaveNode}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
-                </TextBox>
+                    <Label Grid.Row="1" Grid.Column="2" Content="Master порт:">
+                        <Label.Style>
+                            <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsClientNode}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsSlaveNode}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Label.Style>
+                    </Label>
+                    <TextBox Grid.Row="1" Grid.Column="1" 
+        Text="{Binding MasterIp}"
+        IsEnabled="{Binding CanStart}">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsClientNode}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsSlaveNode}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
 
-                <!-- Кнопки управления -->
-                <StackPanel Grid.Row="0" Grid.Column="4" Grid.RowSpan="2" 
+                    <!-- Кнопки управления -->
+                    <StackPanel Grid.Row="0" Grid.Column="4" Grid.RowSpan="2" 
                            Orientation="Vertical" VerticalAlignment="Center">
-                    <Button Content="Запустить" Command="{Binding StartNodeCommand}"
+                        <Button Content="Запустить" Command="{Binding StartNodeCommand}"
                            Background="#4CAF50" Foreground="White"
                            IsEnabled="{Binding CanStart}"/>
-                    <Button Content="Остановить" Command="{Binding StopNodeCommand}"
+                        <Button Content="Остановить" Command="{Binding StopNodeCommand}"
                            Background="#f44336" Foreground="White"
                            IsEnabled="{Binding CanStop}"/>
-                </StackPanel>
+                    </StackPanel>
 
-                <!-- Кнопки для Client -->
-                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" 
+                    <!-- Кнопки для Client -->
+                    <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" 
                            Orientation="Horizontal" HorizontalAlignment="Left">
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsClientNode}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsClientNode}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
 
-                    <Button Content="Загрузить изображения" Command="{Binding LoadImagesCommand}"
+                        <Button Content="Загрузить изображения" Command="{Binding LoadImagesCommand}"
                            Background="#2196F3" Foreground="White"/>
-                    <Button Content="Отправить на обработку" Command="{Binding SendImagesCommand}"
+
+                        <!-- НОВЫЙ ЭЛЕМЕНТ: Выбор размера фильтра -->
+                        <Label Content="Размер фильтра:" VerticalAlignment="Center" Margin="15,0,0,0"/>
+                        <ComboBox ItemsSource="{Binding FilterSizes}" 
+                             SelectedItem="{Binding SelectedFilterSize}"
+                             Width="100"
+                             ToolTip="Выберите размер окна медианного фильтра"/>
+
+                        <Button Content="Отправить на обработку" Command="{Binding SendImagesCommand}"
                            Background="#FF9800" Foreground="White"/>
-                    <Button Content="Сохранить результаты" Command="{Binding SaveProcessedImagesCommand}"
+                        <Button Content="Сохранить результаты" Command="{Binding SaveProcessedImagesCommand}"
                            Background="#9C27B0" Foreground="White"/>
-                </StackPanel>
+                    </StackPanel>
             </Grid>
         </GroupBox>
 

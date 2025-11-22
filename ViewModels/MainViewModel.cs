@@ -22,12 +22,15 @@ namespace ImageProcessingSystem.ViewModels
         private string _localPort;
         private string _masterIp;
         private string _masterPort;
+        private string _selectedFilterSize;
         private ObservableCollection<string> _logMessages;
         private ObservableCollection<ImageItemViewModel> _images;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ObservableCollection<string> NodeTypes { get; set; }
+        public ObservableCollection<string> FilterSizes { get; set; }
+
         public ObservableCollection<string> LogMessages
         {
             get => _logMessages;
@@ -58,6 +61,17 @@ namespace ImageProcessingSystem.ViewModels
                 OnPropertyChanged(nameof(IsClientNode));
                 OnPropertyChanged(nameof(IsMasterNode));
                 OnPropertyChanged(nameof(IsSlaveNode));
+            }
+        }
+
+        public string SelectedFilterSize
+        {
+            get => _selectedFilterSize;
+            set
+            {
+                _selectedFilterSize = value;
+                OnPropertyChanged(nameof(SelectedFilterSize));
+                AddLog($"Выбран размер фильтра: {value}");
             }
         }
 
@@ -119,10 +133,12 @@ namespace ImageProcessingSystem.ViewModels
         public MainViewModel()
         {
             NodeTypes = new ObservableCollection<string> { "Client", "Master", "Slave" };
+            FilterSizes = new ObservableCollection<string> { "10x10", "15x15", "20x20" };
             LogMessages = new ObservableCollection<string>();
             Images = new ObservableCollection<ImageItemViewModel>();
 
             SelectedNodeType = "Client";
+            SelectedFilterSize = "15x15"; // Значение по умолчанию
             LocalPort = "5000";
             MasterIp = "127.0.0.1";
             MasterPort = "5001";
@@ -133,6 +149,22 @@ namespace ImageProcessingSystem.ViewModels
             SendImagesCommand = new RelayCommand(SendImages, () => IsClientNode && IsRunning && Images.Any(i => !i.IsProcessed));
             ClearLogsCommand = new RelayCommand(ClearLogs);
             SaveProcessedImagesCommand = new RelayCommand(SaveProcessedImages, () => Images.Any(i => i.IsProcessed));
+        }
+
+        /// <summary>
+        /// Получение числового значения размера фильтра из строки "10x10" -> 10
+        /// </summary>
+        private int GetFilterSizeValue()
+        {
+            if (string.IsNullOrEmpty(SelectedFilterSize))
+                return 15;
+
+            // Извлекаем число из строки "10x10"
+            var parts = SelectedFilterSize.Split('x');
+            if (parts.Length > 0 && int.TryParse(parts[0], out int size))
+                return size;
+
+            return 15; // По умолчанию
         }
 
         private void StartNode()
@@ -261,8 +293,13 @@ namespace ImageProcessingSystem.ViewModels
                 if (clientNode == null)
                     return;
 
+                // Получаем размер фильтра
+                int filterSize = GetFilterSizeValue();
+
+                AddLog($"Отправка изображений с размером фильтра: {SelectedFilterSize}");
+
                 var imagesToSend = Images.Where(i => !i.IsProcessed).Select(i => i.ImageInfo).ToList();
-                await clientNode.SendImagesAsync(imagesToSend);
+                await clientNode.SendImagesAsync(imagesToSend, filterSize);
             }
             catch (Exception ex)
             {

@@ -115,7 +115,7 @@ namespace ImageProcessingSystem.Nodes
                 Log($"   PacketId: {packet.PacketId}");
                 Log($"   Размер: {packet.ImageData.Length / 1024}KB");
                 Log($"   Разрешение: {packet.Width}x{packet.Height}");
-                Log($"   Фильтр: Медианный 15x15 (высокая интенсивность)");
+                Log($"   Фильтр: Медианный {packet.FilterSize}x{packet.FilterSize}");
                 Log($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
                 // Применяем медианный фильтр
@@ -124,12 +124,12 @@ namespace ImageProcessingSystem.Nodes
                     try
                     {
                         DateTime startTime = DateTime.Now;
-                        Log($"   Начало обработки изображения: {packet.FileName}");
+                        Log($"   Начало обработки изображения: {packet.FileName} (фильтр: {packet.FilterSize}x{packet.FilterSize})");
 
-                        byte[] processedData = _filterService.ApplyMedianFilter(packet.ImageData);
+                        byte[] processedData = _filterService.ApplyMedianFilter(packet.ImageData, packet.FilterSize);
 
                         TimeSpan processingTime = DateTime.Now - startTime;
-                        Log($"   Фильтр применён за {processingTime.TotalSeconds:F2} сек");
+                        Log($"   Фильтр {packet.FilterSize}x{packet.FilterSize} применён за {processingTime.TotalSeconds:F2} сек");
 
                         // Проверяем размер результата
                         int originalSize = processedData.Length;
@@ -243,7 +243,8 @@ namespace ImageProcessingSystem.Nodes
                             Height = packet.Height,
                             Format = packet.Format,
                             PacketId = packet.PacketId,
-                            SlavePort = _udpService.Port // Указываем порт Slave для идентификации
+                            SlavePort = _udpService.Port, // Указываем порт Slave для идентификации
+                            FilterSize = packet.FilterSize // Сохраняем размер фильтра в ответе
                         };
 
                         // Отправляем результат обратно Master узлу

@@ -72,7 +72,7 @@ namespace ImageProcessingSystem.Nodes
         /// <summary>
         /// Отправка изображения на Master узел
         /// </summary>
-        public async Task<bool> SendImageAsync(ImageInfo imageInfo)
+        public async Task<bool> SendImageAsync(ImageInfo imageInfo, int filterSize = 15)
         {
             try
             {
@@ -82,7 +82,8 @@ namespace ImageProcessingSystem.Nodes
                     FileName = imageInfo.FileName,
                     Width = imageInfo.Width,
                     Height = imageInfo.Height,
-                    Format = imageInfo.Format
+                    Format = imageInfo.Format,
+                    FilterSize = filterSize // Передаём размер фильтра
                 };
 
                 string packetJson = JsonConvert.SerializeObject(packet);
@@ -102,7 +103,7 @@ namespace ImageProcessingSystem.Nodes
 
                 if (sent)
                 {
-                    Log($"Отправлено изображение {imageInfo.FileName} на Master ({_masterIp}:{_masterPort})");
+                    Log($"Отправлено изображение {imageInfo.FileName} на Master ({_masterIp}:{_masterPort}) с фильтром {filterSize}x{filterSize}");
                     return true;
                 }
                 else
@@ -121,11 +122,11 @@ namespace ImageProcessingSystem.Nodes
         /// <summary>
         /// Отправка всех изображений
         /// </summary>
-        public async Task SendImagesAsync(List<ImageInfo> images)
+        public async Task SendImagesAsync(List<ImageInfo> images, int filterSize = 15)
         {
             foreach (var image in images)
             {
-                await SendImageAsync(image);
+                await SendImageAsync(image, filterSize);
                 await Task.Delay(100); // Небольшая задержка между отправками
             }
         }
