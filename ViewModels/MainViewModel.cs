@@ -133,12 +133,12 @@ namespace ImageProcessingSystem.ViewModels
         public MainViewModel()
         {
             NodeTypes = new ObservableCollection<string> { "Client", "Master", "Slave" };
-            FilterSizes = new ObservableCollection<string> { "10x10", "15x15", "20x20" };
+            FilterSizes = new ObservableCollection<string> { "15x15", "25x25", "35x35" };
             LogMessages = new ObservableCollection<string>();
             Images = new ObservableCollection<ImageItemViewModel>();
 
             SelectedNodeType = "Client";
-            SelectedFilterSize = "15x15"; // Значение по умолчанию
+            SelectedFilterSize = "15x15";
             LocalPort = "5000";
             MasterIp = "127.0.0.1";
             MasterPort = "5001";
@@ -152,14 +152,14 @@ namespace ImageProcessingSystem.ViewModels
         }
 
         /// <summary>
-        /// Получение числового значения размера фильтра из строки "10x10" -> 10
+        /// Получение числового значения размера фильтра из строки "15x15" -> 15
         /// </summary>
         private int GetFilterSizeValue()
         {
             if (string.IsNullOrEmpty(SelectedFilterSize))
                 return 15;
 
-            // Извлекаем число из строки "10x10"
+            // Извлекаем число из строки "15x15"
             var parts = SelectedFilterSize.Split('x');
             if (parts.Length > 0 && int.TryParse(parts[0], out int size))
                 return size;
